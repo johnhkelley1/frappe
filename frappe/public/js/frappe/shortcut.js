@@ -2,21 +2,17 @@ frappe.provide("frappe.ui");
 frappe.ui.shortcut = class Shortcut {
 
 	constructor() {
-		console.log("shortcut constructor")
-		this.get_user_shortcut_settings();
 		this.container = $("#shortcut_div");
+		this.get_user_shortcut_settings();
 		this.render();
 		this.setup_click();
-		$( "#shortcut_div .shortcut-icon" ).each(function( index ) {
-
+		$("#shortcut_div .shortcut-icon").each(function() {
 			$(this).find(".app-icon").tooltip({
 				container: ".main-section",
 				placement: "right"
 			});
-
 		});
 		this.make_sortable();
-
 	}
 
 	get_user_shortcut_settings(){
@@ -25,12 +21,17 @@ frappe.ui.shortcut = class Shortcut {
 			method: "frappe.utils.user.get_user_homepage",
 			args: {"user": frappe.session.user}
 		}).done((r) => {
-			console.log(r.message);
 			if(r.message){
 				self.nav = r.message.nav;
 				self.user_homepage = r.message.user_homepage;
+				// self.container.addClass("shortcut-body");
 				if(r.message.nav == "Sidebar"){
 					self.register_events();
+					$("#body_div").addClass("shortcut-body");
+					self.container.removeClass("hidden");
+				} else {
+					self.container.addClass("hidden");
+					$("#body_div").removeClass("shortcut-body");
 				}
 			}
 		}).fail((f) => {
@@ -47,7 +48,7 @@ frappe.ui.shortcut = class Shortcut {
 			}
 		});
 
-		frappe.route.on("change", function(e){
+		frappe.route.on("change", function(){
 			if(frappe.get_route()[0] == ""){ // if route == desk
 				$("#page-desktop").hide();
 				self.redirect_to_user_homepage();
@@ -70,7 +71,7 @@ frappe.ui.shortcut = class Shortcut {
 		this.container.html(all_html);
 		this.handle_route_change();
 		var self = this;
-		frappe.route.on("change", function(e){
+		frappe.route.on("change", function(){
 			self.handle_route_change();
 		});
 	}
@@ -99,9 +100,9 @@ frappe.ui.shortcut = class Shortcut {
 	make_sortable() {
 		new Sortable($("#shortcut_div").get(0), {
 			animation: 150,
-			onUpdate: function(event) {
+			onUpdate: function() {
 				var new_order = [];
-				$("#shortcut_div .shortcut-icon").each(function(i, e) {
+				$("#shortcut_div .shortcut-icon").each(function() {
 					new_order.push($(this).attr("data-name"));
 				});
 
@@ -125,7 +126,7 @@ frappe.ui.shortcut = class Shortcut {
 			$("#shortcut_div").removeClass("desk_shortcut_div");
 		}
 		// Inactivate links
-		$( "#shortcut_div .shortcut-icon" ).each(function( index ) {
+		$( "#shortcut_div .shortcut-icon" ).each(function() {
 
 			let route = frappe.get_route().join('/');
 			let data_link = $(this).attr("data-link");
@@ -146,7 +147,7 @@ frappe.ui.shortcut = class Shortcut {
 		}
 		return false;
 	}
-}
+};
 
 $(document).on('app_ready',function() {
 	frappe.shortcut_bar = new frappe.ui.shortcut();
