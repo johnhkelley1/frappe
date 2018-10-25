@@ -6,6 +6,13 @@ frappe.ui.shortcut = class Shortcut {
 		this.container = $("#shortcut_div");
 		this.render();
 		this.setup_click();
+		$( "#shortcut_div .shortcut-icon" ).each(function( index ) {
+
+			$(this).find(".app-icon").attr('data-toggle', 'tooltip');
+			$(this).find(".app-icon").attr('data-placement', 'right');
+			$(this).find(".app-icon").tooltip({container: ".main-section"});
+
+		});
 		this.make_sortable();
 
 	}
