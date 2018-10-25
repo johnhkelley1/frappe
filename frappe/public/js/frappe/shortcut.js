@@ -108,11 +108,9 @@ frappe.ui.shortcut = class Shortcut {
 }
 
 $(document).ready(function() {
-	$("body").hide();
 	if(frappe.get_route()[0] == ""){ // if route == desk
+		$("#page-desktop").hide();
 		redirect_to_user_homepage(frappe.session.user);
-	} else {
-		$("body").show();
 	}
 });
 
@@ -121,11 +119,9 @@ $(document).on('app_ready',function() {
 });
 
 frappe.route.on("change", function(e){
-	$("body").hide();
 	if(frappe.get_route()[0] == ""){ // if route == desk
+		$("#page-desktop").hide();
 		redirect_to_user_homepage(frappe.session.user);
-	} else {
-		$("body").show();
 	}
 });
 
@@ -134,7 +130,11 @@ function redirect_to_user_homepage(user) {
 		method: "frappe.utils.user.get_user_homepage",
 		args: {"user": user}
 	}).done((r) => {
-		frappe.set_route(r.message);
+		if(r.message != ""){
+			frappe.set_route(r.message);
+		} else if(frappe.get_route()[0] == "") {
+			$("#page-desktop").show();
+		}
 	}).fail((f) => {
 		console.log(f);
 	});
