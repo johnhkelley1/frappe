@@ -379,3 +379,7 @@ def get_link_to_reset_password(user):
 	return {
 		'link': link
 	}
+
+@frappe.whitelist()
+def get_user_homepage(user):
+	return frappe.db.get_value("User", user, "user_homepage")

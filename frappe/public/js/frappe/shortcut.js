@@ -92,7 +92,7 @@ frappe.ui.shortcut = class Shortcut {
 			if(route.includes(data_link)){
 				$(this).removeClass("inactive-shortcut");
 			} else if(!$(this).hasClass("inactive-shortcut")) {
-				$(this).addClass("inactive-shortcut")
+				$(this).addClass("inactive-shortcut");
 			}
 
 		});
@@ -105,9 +105,37 @@ frappe.ui.shortcut = class Shortcut {
 		}
 		return false;
 	}
-
 }
 
-$(document).on('app_ready',function(e) {
+$(document).ready(function() {
+	$("body").hide();
+	if(frappe.get_route()[0] == ""){ // if route == desk
+		redirect_to_user_homepage(frappe.session.user);
+	} else {
+		$("body").show();
+	}
+});
+
+$(document).on('app_ready',function() {
 	frappe.shortcut_bar = new frappe.ui.shortcut();
 });
+
+frappe.route.on("change", function(e){
+	$("body").hide();
+	if(frappe.get_route()[0] == ""){ // if route == desk
+		redirect_to_user_homepage(frappe.session.user);
+	} else {
+		$("body").show();
+	}
+});
+
+function redirect_to_user_homepage(user) {
+	frappe.call({
+		method: "frappe.utils.user.get_user_homepage",
+		args: {"user": user}
+	}).done((r) => {
+		frappe.set_route(r.message);
+	}).fail((f) => {
+		console.log(f);
+	});
+}
