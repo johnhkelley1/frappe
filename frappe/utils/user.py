@@ -384,5 +384,5 @@ def get_link_to_reset_password(user):
 def get_user_homepage(user):
 	nav = frappe.db.get_value("User", user, "sidebar_navigation")
 	if nav == "Desk":
-		return ""
-	return frappe.db.get_value("User", user, "user_homepage")
+		return {"nav": "Desk", "user_homepage": ""}
+	return {"nav": "Sidebar", "user_homepage": frappe.db.get_value("User", user, "user_homepage")}

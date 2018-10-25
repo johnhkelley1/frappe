@@ -2,7 +2,8 @@ frappe.provide("frappe.ui");
 frappe.ui.shortcut = class Shortcut {
 
 	constructor() {
-
+		console.log("shortcut constructor")
+		this.get_user_shortcut_settings();
 		this.container = $("#shortcut_div");
 		this.render();
 		this.setup_click();
@@ -16,6 +17,46 @@ frappe.ui.shortcut = class Shortcut {
 		});
 		this.make_sortable();
 
+	}
+
+	get_user_shortcut_settings(){
+		var self = this;
+		frappe.call({
+			method: "frappe.utils.user.get_user_homepage",
+			args: {"user": frappe.session.user}
+		}).done((r) => {
+			console.log(r.message);
+			if(r.message){
+				self.nav = r.message.nav;
+				self.user_homepage = r.message.user_homepage;
+				if(r.message.nav == "Sidebar"){
+					self.register_events();
+				}
+			}
+		}).fail((f) => {
+			console.log(f);
+		});
+	}
+
+	register_events() {
+		var self = this;
+		$(document).ready(function() {
+			if(frappe.get_route()[0] == ""){ // if route == desk
+				$("#page-desktop").hide();
+				self.redirect_to_user_homepage();
+			}
+		});
+
+		frappe.route.on("change", function(e){
+			if(frappe.get_route()[0] == ""){ // if route == desk
+				$("#page-desktop").hide();
+				self.redirect_to_user_homepage();
+			}
+		});
+	}
+
+	redirect_to_user_homepage(){
+		frappe.set_route(this.user_homepage);
 	}
 
 	render() {
@@ -107,35 +148,6 @@ frappe.ui.shortcut = class Shortcut {
 	}
 }
 
-$(document).ready(function() {
-	if(frappe.get_route()[0] == ""){ // if route == desk
-		$("#page-desktop").hide();
-		redirect_to_user_homepage(frappe.session.user);
-	}
-});
-
 $(document).on('app_ready',function() {
 	frappe.shortcut_bar = new frappe.ui.shortcut();
 });
-
-frappe.route.on("change", function(e){
-	if(frappe.get_route()[0] == ""){ // if route == desk
-		$("#page-desktop").hide();
-		redirect_to_user_homepage(frappe.session.user);
-	}
-});
-
-function redirect_to_user_homepage(user) {
-	frappe.call({
-		method: "frappe.utils.user.get_user_homepage",
-		args: {"user": user}
-	}).done((r) => {
-		if(r.message != ""){
-			frappe.set_route(r.message);
-		} else if(frappe.get_route()[0] == "") {
-			$("#page-desktop").show();
-		}
-	}).fail((f) => {
-		console.log(f);
-	});
-}
