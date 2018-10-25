@@ -19,9 +19,10 @@ frappe.ui.shortcut = class Shortcut {
 			all_html += html;
 		}
 		this.container.html(all_html);
-		this.change_height();
+		this.handle_route_change();
+		var self = this;
 		frappe.route.on("change", function(e){
-			frappe.shortcut_bar.change_height();
+			self.handle_route_change();
 		});
 	}
 
@@ -67,12 +68,26 @@ frappe.ui.shortcut = class Shortcut {
 		});
 	}
 
-	change_height() {
+	handle_route_change() {
+		// Adjust height
 		if(frappe.get_route().length == 1 && frappe.get_route()[0] == "") {
 			$("#shortcut_div").addClass("desk_shortcut_div");
 		} else {
 			$("#shortcut_div").removeClass("desk_shortcut_div");
 		}
+		// Inactivate links
+		$( "#shortcut_div .shortcut-icon" ).each(function( index ) {
+
+			let route = frappe.get_route().join('/');
+			let data_link = $(this).attr("data-link");
+
+			if(route.includes(data_link)){
+				$(this).removeClass("inactive-shortcut");
+			} else if(!$(this).hasClass("inactive-shortcut")) {
+				$(this).addClass("inactive-shortcut")
+			}
+
+		});
 	}
 
 	go_to_route(parent) {

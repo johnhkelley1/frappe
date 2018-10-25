@@ -1,7 +1,7 @@
 #shortcut_div {
   overflow: scroll;
   position: fixed;
-  left: 0;
+  left: 10px;
   bottom: 0;
   height: calc(100vh - 110px);
   width: 85px;
@@ -9,12 +9,42 @@
   text-align: center;
   padding-top: 20px;
   padding-right: 10px;
+
   .app-icon {
-    padding: 0 0 0 3px;
-    width: 60px;
-    height: 60px;
+    padding: 2px;
+    width: 45px;
+    height: 45px;
     margin: auto;
-    line-height: 70px;
+    line-height: 45px;
+    border-radius: 4px;
+  }
+  .shortcut-icon.inactive-shortcut {
+    .app-icon {
+      padding: 2px;
+      width: 45px;
+      height: 45px;
+      margin: auto;
+      line-height: 45px;
+      border-radius: 4px;
+      background-color: #eff4f7 !important;
+    }
+    .app-icon:hover{
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    }
+    .app-icon .inner, .app-icon i {
+      color: #8a99a785 !important;
+    }
+  }
+  .app-icon .inner, .app-icon i {
+    font-size: 23px;
+    min-width: 32px;
+    display: inline-block;
+    transition: 0.2s;
+    -webkit-transition: 0.2s;
+    text-shadow: none;
+  }
+  .case-label {
+    margin-top: 20px;
   }
   &.desk_shortcut_div {
     height: calc(100vh - 40px) !important;
