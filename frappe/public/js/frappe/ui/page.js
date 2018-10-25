@@ -115,6 +115,9 @@ frappe.ui.Page = Class.extend({
 		this.menu = this.page_actions.find(".menu-btn-group .dropdown-menu");
 		this.menu_btn_group = this.page_actions.find(".menu-btn-group");
 
+		this.views = this.page_actions.find(".views-btn-group .dropdown-menu");
+		this.views_btn_group = this.page_actions.find(".views-btn-group");
+
 		this.actions = this.page_actions.find(".actions-btn-group .dropdown-menu");
 		this.actions_btn_group = this.page_actions.find(".actions-btn-group");
 
@@ -257,6 +260,29 @@ frappe.ui.Page = Class.extend({
 
 	clear_actions_menu: function() {
 		this.clear_btn_group(this.actions);
+	},
+
+	//--- View Menu--//
+
+	show_views_menu: function() {
+		this.views_btn_group.removeClass("hide");
+	},
+
+	hide_views_menu: function() {
+		this.views_btn_group.addClass("hide");
+	},
+
+
+	add_views_item: function(label, click, standard) {
+		return this.add_dropdown_item(label, click, standard, this.views);
+	},
+
+	add_views_menu_item: function(label, click, standard) {
+		return this.add_dropdown_item(label, click, standard, this.views, false);
+	},
+
+	clear_views_menu: function() {
+		this.clear_btn_group(this.views);
 	},
 
 
