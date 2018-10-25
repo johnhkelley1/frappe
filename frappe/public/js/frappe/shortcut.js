@@ -8,9 +8,10 @@ frappe.ui.shortcut = class Shortcut {
 		this.setup_click();
 		$( "#shortcut_div .shortcut-icon" ).each(function( index ) {
 
-			$(this).find(".app-icon").attr('data-toggle', 'tooltip');
-			$(this).find(".app-icon").attr('data-placement', 'right');
-			$(this).find(".app-icon").tooltip({container: ".main-section"});
+			$(this).find(".app-icon").tooltip({
+				container: ".main-section",
+				placement: "right"
+			});
 
 		});
 		this.make_sortable();
@@ -58,19 +59,19 @@ frappe.ui.shortcut = class Shortcut {
 		new Sortable($("#shortcut_div").get(0), {
 			animation: 150,
 			onUpdate: function(event) {
-				// var new_order = [];
-				// $("#shortcut_div .shortcut-icon").each(function(i, e) {
-				// 	new_order.push($(this).attr("data-name"));
-				// });
-				//
-				// frappe.call({
-				// 	method: 'frappe.desk.doctype.desktop_icon.desktop_icon.set_order',
-				// 	args: {
-				// 		'new_order': new_order,
-				// 		'user': frappe.session.user
-				// 	},
-				// 	quiet: true
-				// });
+				var new_order = [];
+				$("#shortcut_div .shortcut-icon").each(function(i, e) {
+					new_order.push($(this).attr("data-name"));
+				});
+
+				frappe.call({
+					method: 'frappe.desk.doctype.desktop_icon.desktop_icon.set_order',
+					args: {
+						'new_order': new_order,
+						'user': frappe.session.user
+					},
+					quiet: true
+				});
 			}
 		});
 	}
