@@ -668,3 +668,11 @@ frappe.add_to_desktop = function(label, doctype, report) {
 		}
 	});
 };
+
+$(window).bind("hashchange", function() {
+	$(document).trigger("route_change");
+});
+
+window.onload = function() {
+	$(document).trigger("route_change");
+};
