@@ -277,7 +277,7 @@ a.no-decoration:active {
   border-radius: 4px;
 }
 .avatar-small {
-  margin-right: 5px;
+  margin-right: 8px;
   width: 24px;
   height: 24px;
 }
@@ -336,11 +336,13 @@ a.no-decoration:active {
   text-align: center;
   border-radius: 4px;
   font-size: 14px;
-  line-height: 0px;
+  line-height: 2px;
   color: #d1d8dd;
-  border: 1px solid #d1d8dd;
+  /* border: 1px solid #d1d8dd; */
   font-weight: normal;
   margin-top: -1px;
+  height: 24px;
+  width: 24px;
 }
 .indicator,
 .indicator-right {

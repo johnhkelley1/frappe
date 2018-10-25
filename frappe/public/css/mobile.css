@@ -51,11 +51,10 @@ body {
   .toggle-navbar-new-comments {
     padding: 8px 0px !important;
   }
-  .navbar > .container > .navbar-header {
+  .navbar > .container-fluid > .navbar-header {
     float: left;
-    width: 80%;
   }
-  .navbar > .container > .navbar-right {
+  .navbar > .container-fluid > .navbar-right {
     float: right;
   }
   .module-item {
@@ -187,7 +186,7 @@ body {
   }
   body[data-sidebar="0"] #navbar-breadcrumbs,
   body[data-sidebar="0"] .navbar-home {
-    margin-left: 15px !important;
+    /* margin-left: 15px !important; */
   }
 }
 @media (max-width: 991px) and (max-width: 480px) {
