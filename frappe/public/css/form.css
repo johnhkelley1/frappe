@@ -174,11 +174,11 @@
 }
 h6.uppercase,
 .h6.uppercase {
-  font-size: 11px;
-  font-weight: normal;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: #8D99A6;
+  font-size: 22px;
+    font-weight: 200;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #55545f;
 }
 .form-section {
   margin: 0px;
@@ -198,7 +198,7 @@ h6.uppercase,
   color: #d1d8dd;
   margin-left: 10px;
   position: relative;
-  bottom: -1px;
+  bottom: 2px;
 }
 .form-section .section-head .collapse-indicator.octicon-chevron-up {
   bottom: -2px;

@@ -341,8 +341,8 @@ a.no-decoration:active {
   /* border: 1px solid #d1d8dd; */
   font-weight: normal;
   margin-top: -1px;
-  height: 24px;
-  width: 24px;
+  min-height: 24px;
+  min-width: 24px;
 }
 .indicator,
 .indicator-right {
