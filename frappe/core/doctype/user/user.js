@@ -53,6 +53,15 @@ frappe.ui.form.on('User', {
 				frm.roles_editor.show();
 			}
 		}
+
+		cur_frm.set_query("user_homepage", function() {
+			if(frm.doc.sidebar_navigation == "Desk") return {};
+			return {
+				"filters": [
+					["Page", "name", "!=", "desktop"]
+				]
+			};
+		});
 	},
 	refresh: function(frm) {
 		var doc = frm.doc;
@@ -202,6 +211,21 @@ frappe.ui.form.on('User', {
 				}
 			}
 		})
+	},
+	sidebar_navigation: function(frm){
+		if(frm.doc.sidebar_navigation == "Sidebar" && frm.doc.user_homepage == "desktop"){
+			frm.set_value("user_homepage", null);
+		}
+	},
+	user_homepage: function(frm){
+		if(frm.doc.sidebar_navigation == "Sidebar" && frm.doc.user_homepage == "desktop"){
+			frm.set_value("user_homepage", null);
+		}
+	},
+	after_save: function(frm){
+		if(frappe.session.user == frm.doc.name) {
+			frappe.shortcut_bar.get_user_shortcut_settings();
+		}
 	}
 })
 

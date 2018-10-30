@@ -3,15 +3,16 @@ frappe.ui.shortcut = class Shortcut {
 
 	constructor() {
 		this.container = $("#shortcut_div");
+		$("#shortcut_div").hide();
+		$("#page-desktop").hide();
+
+		this.cur_route = window.location.hash;
+		this.last_route = null;
+
+		this.register_redirect_events();
 		this.get_user_shortcut_settings();
 		this.render();
-		this.setup_click();
-		$("#shortcut_div .shortcut-icon").each(function() {
-			$(this).find(".app-icon").tooltip({
-				container: ".main-section",
-				placement: "right"
-			});
-		});
+		this.register_icon_events();
 		this.make_sortable();
 	}
 
@@ -24,14 +25,14 @@ frappe.ui.shortcut = class Shortcut {
 			if(r.message){
 				self.nav = r.message.nav;
 				self.user_homepage = r.message.user_homepage;
-				// self.container.addClass("shortcut-body");
-				if(r.message.nav == "Sidebar"){
-					self.register_events();
+				self.handle_redirect();
+
+				if(self.nav == "Sidebar"){
 					$("#body_div").addClass("shortcut-body");
-					self.container.removeClass("hidden");
+					self.container.show();
 				} else {
-					self.container.addClass("hidden");
 					$("#body_div").removeClass("shortcut-body");
+					self.container.hide();
 				}
 			}
 		}).fail((f) => {
@@ -39,25 +40,25 @@ frappe.ui.shortcut = class Shortcut {
 		});
 	}
 
-	register_events() {
+	register_redirect_events() {
 		var self = this;
-		$(document).ready(function() {
-			if(frappe.get_route()[0] == ""){ // if route == desk
-				$("#page-desktop").hide();
-				self.redirect_to_user_homepage();
-			}
-		});
-
 		frappe.route.on("change", function(){
-			if(frappe.get_route()[0] == ""){ // if route == desk
-				$("#page-desktop").hide();
-				self.redirect_to_user_homepage();
-			}
+			self.last_route = self.cur_route;
+			self.cur_route = window.location.hash;
+			self.handle_redirect();
 		});
 	}
 
-	redirect_to_user_homepage(){
-		frappe.set_route(this.user_homepage);
+	handle_redirect() {
+		$("#page-desktop").hide();
+		if(this.cur_route == "" && this.last_route == "#"+this.user_homepage) {
+			history.back();
+		}
+		else if(this.nav == "Sidebar" && frappe.get_route()[0] == "" && this.user_homepage != "desktop"){ // if route == desk
+			frappe.set_route(this.user_homepage); // redirect to user homepage
+		} else if(frappe.get_route()[0] == "") {
+			$("#page-desktop").show();
+		}
 	}
 
 	render() {
@@ -76,10 +77,16 @@ frappe.ui.shortcut = class Shortcut {
 		});
 	}
 
-	setup_click() {
+	register_icon_events() {
 		var self = this;
 		this.container.on("click", ".app-icon, .app-icon-svg", function() {
 			self.go_to_route($(this).parent());
+		});
+		$("#shortcut_div .shortcut-icon").each(function() {
+			$(this).find(".app-icon").tooltip({
+				container: ".main-section",
+				placement: "right"
+			});
 		});
 	}
 
@@ -119,12 +126,6 @@ frappe.ui.shortcut = class Shortcut {
 	}
 
 	handle_route_change() {
-		// Adjust height
-		if(frappe.get_route().length == 1 && frappe.get_route()[0] == "") {
-			$("#shortcut_div").addClass("desk_shortcut_div");
-		} else {
-			$("#shortcut_div").removeClass("desk_shortcut_div");
-		}
 		// Inactivate links
 		$( "#shortcut_div .shortcut-icon" ).each(function() {
 
