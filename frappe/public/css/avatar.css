@@ -24,7 +24,7 @@
   border-radius: 4px;
 }
 .avatar-small {
-  margin-right: 8px;
+  margin-right: 5px;
   width: 24px;
   height: 24px;
 }
@@ -83,11 +83,9 @@
   text-align: center;
   border-radius: 4px;
   font-size: 14px;
-  line-height: 2px;
+  line-height: 0px;
   color: #d1d8dd;
-  /* border: 1px solid #d1d8dd; */
+  border: 1px solid #d1d8dd;
   font-weight: normal;
   margin-top: -1px;
-  min-height: 24px;
-  min-width: 24px;
 }

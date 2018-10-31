@@ -261,14 +261,14 @@ a.no-decoration:active {
   cursor: pointer;
 }
 .avatar {
-  /* padding: 2px; */
+  padding: 2px;
 }
 .navbar .frappe-chat-toggle {
   height: 40px;
   text-align: center;
 }
 .navbar .octicon {
-  margin-top: 4px;
+  margin-top: 5px;
 }
 .frappe-chat > .frappe-chat-popper {
   position: fixed;
