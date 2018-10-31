@@ -14,6 +14,7 @@ frappe.ui.shortcut = class Shortcut {
 		this.render();
 		this.register_icon_events();
 		this.make_sortable();
+		this.setup_wiggle();
 	}
 
 	get_user_shortcut_settings(){
@@ -77,9 +78,12 @@ frappe.ui.shortcut = class Shortcut {
 	}
 
 	register_icon_events() {
+		this.wiggling = false;
 		var me = this;
 		this.container.on("click", ".app-icon, .app-icon-svg", function() {
-			me.go_to_route($(this).parent());
+			if ( !me.wiggling ) {
+				me.go_to_route($(this).parent());
+			}
 		});
 		$("#shortcut_div .shortcut-icon").each(function() {
 			$(this).find(".app-icon").tooltip({
@@ -95,8 +99,15 @@ frappe.ui.shortcut = class Shortcut {
 			data-name="${ module_name }" data-link="${ link }" title="${ label }">
 			${ app_icon }
 			<div class="case-label ellipsis">
-				<div class="circle module-count-${ id }" data-doctype="${ doctype }" style="display: none;">
+				<div class="circle notis module-count-${ id }" data-doctype="${ doctype }" style="display: none;">
 					<span class="circle-text"></span>
+				</div>
+			</div>
+			<div class="circle module-remove" style="background-color:#E0E0E0; color:#212121; display: none;">
+				<div class="circle-text">
+					<b>
+						&times
+					</b>
 				</div>
 			</div>
 		</div>
@@ -146,6 +157,100 @@ frappe.ui.shortcut = class Shortcut {
 			frappe.set_route(link);
 		}
 		return false;
+	}
+
+	setup_wiggle() {
+		// Wiggle, Wiggle, Wiggle.
+		const DURATION_LONG_PRESS = 1000;
+
+		var   timer_id      = 0;
+		const $cases        = this.container.find('.shortcut-icon');
+		const $icons        = this.container.find('.app-icon');
+		const $notis        = $(this.container.find('.notis').toArray().filter((object) => {
+			// This hack is so bad, I should punch myself.
+			// Seriously, punch yourself.
+			const text      = $(object).find('.circle-text').html();
+
+			return text;
+		}));
+		const $closes   = $cases.find('.module-remove');
+
+		const clearWiggle   = () => {
+
+			$closes.hide();
+			$notis.show();
+
+			$icons.removeClass('wiggle');
+
+			this.wiggling   = false;
+		};
+
+		var me = this;
+
+		$cases.each((i) => {
+			const $case    = $($cases[i]);
+
+			const $close  = $case.find('.module-remove');
+			const name    = $case.attr('title');
+			$close.click(() => {
+				// good enough to create dynamic dialogs?
+				const dialog = new frappe.ui.Dialog({
+					title: __(`Hide ${name}?`)
+				});
+				dialog.set_primary_action(__('Hide'), () => {
+					frappe.call({
+						method: 'frappe.desk.doctype.desktop_icon.desktop_icon.hide',
+						args: { name: name },
+						freeze: true,
+						callback: (response) =>
+						{
+							if ( response.message ) {
+								location.reload();
+							}
+						}
+					})
+
+					dialog.hide();
+
+					clearWiggle();
+				});
+				// Hacks, Hacks and Hacks.
+				var $cancel = dialog.get_close_btn();
+				$cancel.click(() => {
+					clearWiggle();
+				});
+				$cancel.html(__(`Cancel`));
+
+				dialog.show();
+			});
+		});
+
+		this.container.on('mousedown', '.app-icon', () => {
+			timer_id     = setTimeout(() => {
+				me.wiggling = true;
+				// hide all notifications.
+				$notis.hide();
+				$closes.show();
+
+				$icons.addClass('wiggle');
+
+			}, DURATION_LONG_PRESS);
+		});
+		this.container.on('mouseup mouseleave', '.app-icon', () => {
+			clearTimeout(timer_id);
+		});
+
+		// also stop wiggling if clicked elsewhere.
+		$('body').click((event) => {
+			if ( me.wiggling ) {
+				const $target = $(event.target);
+				// our target shouldn't be .app-icons or .close
+				const $parent = $target.parents('.shortcut-icon');
+				if ( $parent.length == 0 )
+					clearWiggle();
+			}
+		});
+		// end wiggle
 	}
 };
 
