@@ -381,8 +381,7 @@ def get_link_to_reset_password(user):
 	}
 
 @frappe.whitelist()
-def get_user_homepage(user):
+def get_user_shortcut_settings(user):
 	nav = frappe.db.get_value("User", user, "sidebar_navigation")
-	if nav == "Desk":
-		return {"nav": "Desk", "user_homepage": ""}
-	return {"nav": "Sidebar", "user_homepage": frappe.db.get_value("User", user, "user_homepage")}
+	homepage = frappe.db.get_value("User", user, "user_homepage")
+	return {"nav": nav, "user_homepage": homepage}

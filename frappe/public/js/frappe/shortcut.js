@@ -17,22 +17,21 @@ frappe.ui.shortcut = class Shortcut {
 	}
 
 	get_user_shortcut_settings(){
-		var self = this;
 		frappe.call({
-			method: "frappe.utils.user.get_user_homepage",
+			method: "frappe.utils.user.get_user_shortcut_settings",
 			args: {"user": frappe.session.user}
 		}).done((r) => {
 			if(r.message){
-				self.nav = r.message.nav;
-				self.user_homepage = r.message.user_homepage;
-				self.handle_redirect();
+				this.nav = r.message.nav;
+				this.user_homepage = r.message.user_homepage;
+				this.handle_redirect();
 
-				if(self.nav == "Sidebar"){
+				if(this.nav == "Sidebar"){
 					$("#body_div").addClass("shortcut-body");
-					self.container.show();
+					this.container.show();
 				} else {
 					$("#body_div").removeClass("shortcut-body");
-					self.container.hide();
+					this.container.hide();
 				}
 			}
 		}).fail((f) => {
@@ -41,22 +40,22 @@ frappe.ui.shortcut = class Shortcut {
 	}
 
 	register_redirect_events() {
-		var self = this;
+		var me = this;
 		frappe.route.on("change", function(){
-			self.last_route = self.cur_route;
-			self.cur_route = window.location.hash;
-			self.handle_redirect();
+			me.last_route = me.cur_route;
+			me.cur_route = window.location.hash;
+			me.handle_redirect();
 		});
 	}
 
 	handle_redirect() {
 		$("#page-desktop").hide();
+		var frappe_route = frappe.get_route()[0];
 		if(this.cur_route == "" && this.last_route == "#"+this.user_homepage) {
 			history.back();
-		}
-		else if(this.nav == "Sidebar" && frappe.get_route()[0] == "" && this.user_homepage != "desktop"){ // if route == desk
+		} else if((frappe_route == "" || (this.nav == "Sidebar" && frappe_route == "desktop")) && this.user_homepage && this.user_homepage != "desktop"){ // if route == desk
 			frappe.set_route(this.user_homepage); // redirect to user homepage
-		} else if(frappe.get_route()[0] == "") {
+		} else if(frappe_route == "" || frappe_route == "desktop") {
 			$("#page-desktop").show();
 		}
 	}
@@ -71,16 +70,16 @@ frappe.ui.shortcut = class Shortcut {
 		}
 		this.container.html(all_html);
 		this.handle_route_change();
-		var self = this;
+		var me = this;
 		frappe.route.on("change", function(){
-			self.handle_route_change();
+			me.handle_route_change();
 		});
 	}
 
 	register_icon_events() {
-		var self = this;
+		var me = this;
 		this.container.on("click", ".app-icon, .app-icon-svg", function() {
-			self.go_to_route($(this).parent());
+			me.go_to_route($(this).parent());
 		});
 		$("#shortcut_div .shortcut-icon").each(function() {
 			$(this).find(".app-icon").tooltip({
