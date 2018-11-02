@@ -1,5 +1,5 @@
 frappe.provide("frappe.ui");
-frappe.ui.shortcut = class Shortcut {
+frappe.ui.DeskSidebar = class DeskSidebar {
 
 	constructor() {
 		this.user_homepage = frappe.session.user_homepage;
@@ -7,8 +7,8 @@ frappe.ui.shortcut = class Shortcut {
 
 		this.update_reroute();
 
-		this.container = $("#shortcut_div");
-		$("#shortcut_div").hide();
+		this.container = $("#desk_sidebar_div");
+		this.container.hide();
 
 		this.update_dom();
 		this.render();
@@ -17,10 +17,9 @@ frappe.ui.shortcut = class Shortcut {
 		this.setup_wiggle();
 	}
 
-	get_user_shortcut_settings(){
+	get_desk_navigation_settings(){
 		frappe.call({
-			method: "frappe.utils.user.get_user_shortcut_settings",
-			args: {"user": frappe.session.user}
+			method: "frappe.utils.user.get_desk_navigation_settings"
 		}).done((r) => {
 			if(r.message){
 				this.nav = r.message.nav;
@@ -49,10 +48,10 @@ frappe.ui.shortcut = class Shortcut {
 
 	update_dom(){
 		if(this.nav == "Sidebar"){
-			$("#body_div").addClass("shortcut-body");
+			$("#body_div").addClass("with-sidebar");
 			this.container.show();
 		} else {
-			$("#body_div").removeClass("shortcut-body");
+			$("#body_div").removeClass("with-sidebar");
 			this.container.hide();
 		}
 	}
@@ -62,7 +61,7 @@ frappe.ui.shortcut = class Shortcut {
 		let all_html = "";
 		for(var idx in all_icons) {
 			let icon = all_icons[idx];
-			let html = this.get_shortcut_html(icon.module_name, icon.link, icon.label, icon.app_icon, icon._id, icon._doctype);
+			let html = this.get_sidebar_icon_html(icon.module_name, icon.link, icon.label, icon.app_icon, icon._id, icon._doctype);
 			all_html += html;
 		}
 		this.container.html(all_html);
@@ -81,7 +80,7 @@ frappe.ui.shortcut = class Shortcut {
 				me.go_to_route($(this).parent());
 			}
 		});
-		$("#shortcut_div .shortcut-icon").each(function() {
+		$("#desk_sidebar_div .desk-sidebar-icon").each(function() {
 			$(this).find(".app-icon").tooltip({
 				container: ".main-section",
 				placement: "right"
@@ -89,9 +88,9 @@ frappe.ui.shortcut = class Shortcut {
 		});
 	}
 
-	get_shortcut_html(module_name, link, label, app_icon, id, doctype) {
+	get_sidebar_icon_html(module_name, link, label, app_icon, id, doctype) {
 		return `
-		<div class="shortcut-icon"
+		<div class="desk-sidebar-icon"
 			data-name="${ module_name }" data-link="${ link }" title="${ label }">
 			${ app_icon }
 			<div class="case-label ellipsis">
@@ -111,11 +110,11 @@ frappe.ui.shortcut = class Shortcut {
 	}
 
 	make_sortable() {
-		new Sortable($("#shortcut_div").get(0), {
+		new Sortable($("#desk_sidebar_div").get(0), {
 			animation: 150,
 			onUpdate: function() {
 				var new_order = [];
-				$("#shortcut_div .shortcut-icon").each(function() {
+				$("#desk_sidebar_div .desk-sidebar-icon").each(function() {
 					new_order.push($(this).attr("data-name"));
 				});
 
@@ -133,15 +132,15 @@ frappe.ui.shortcut = class Shortcut {
 
 	handle_route_change() {
 		// Inactivate links
-		$( "#shortcut_div .shortcut-icon" ).each(function() {
+		$( "#desk_sidebar_div .desk-sidebar-icon" ).each(function() {
 
 			let route = frappe.get_route().join('/');
 			let data_link = $(this).attr("data-link");
 
 			if(route.includes(data_link)){
-				$(this).removeClass("inactive-shortcut");
-			} else if(!$(this).hasClass("inactive-shortcut")) {
-				$(this).addClass("inactive-shortcut");
+				$(this).removeClass("inactive-sidebar-icon");
+			} else if(!$(this).hasClass("inactive-sidebar-icon")) {
+				$(this).addClass("inactive-sidebar-icon");
 			}
 
 		});
@@ -160,7 +159,7 @@ frappe.ui.shortcut = class Shortcut {
 		const DURATION_LONG_PRESS = 1000;
 
 		var   timer_id      = 0;
-		const $cases        = this.container.find('.shortcut-icon');
+		const $cases        = this.container.find('.desk-sidebar-icon');
 		const $icons        = this.container.find('.app-icon');
 		const $notis        = $(this.container.find('.notis').toArray().filter((object) => {
 			// This hack is so bad, I should punch myself.
@@ -241,7 +240,7 @@ frappe.ui.shortcut = class Shortcut {
 			if ( me.wiggling ) {
 				const $target = $(event.target);
 				// our target shouldn't be .app-icons or .close
-				const $parent = $target.parents('.shortcut-icon');
+				const $parent = $target.parents('.desk-sidebar-icon');
 				if ( $parent.length == 0 )
 					clearWiggle();
 			}
@@ -251,5 +250,5 @@ frappe.ui.shortcut = class Shortcut {
 };
 
 $(document).on('app_ready',function() {
-	frappe.shortcut_bar = new frappe.ui.shortcut();
+	frappe.desk_sidebar = new frappe.ui.DeskSidebar();
 });

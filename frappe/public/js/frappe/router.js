@@ -15,6 +15,7 @@ frappe.route_options = null;
 
 frappe.route = function() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	// Application is not yet initiated
 	if (!frappe.app) return;
@@ -22,6 +23,8 @@ frappe.route = function() {
 =======
 	console.log("frappe.route called");
 >>>>>>> use frappe.re_route for homepage redirect
+=======
+>>>>>>> namespace changes
 	if(frappe.re_route[window.location.hash] !== undefined) {
 		// after saving a doc, for example,
 		// "New DocType 1" and the renamed "TestDocType", both exist in history
