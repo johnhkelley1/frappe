@@ -295,6 +295,8 @@ frappe.Application = Class.extend({
 		frappe.session.user = frappe.boot.user.name;
 		frappe.session.user_email = frappe.boot.user.email;
 		frappe.session.user_fullname = frappe.user_info().fullname;
+		frappe.session.user_nav = frappe.boot.user.sidebar_navigation;
+		frappe.session.user_homepage = frappe.boot.user.user_homepage;
 
 		frappe.user_defaults = frappe.boot.user.defaults;
 		frappe.user_roles = frappe.boot.user.roles;

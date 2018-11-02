@@ -2,15 +2,15 @@ frappe.provide("frappe.ui");
 frappe.ui.shortcut = class Shortcut {
 
 	constructor() {
+		this.user_homepage = frappe.session.user_homepage;
+		this.nav = frappe.session.user_nav;
+
+		this.update_reroute();
+
 		this.container = $("#shortcut_div");
 		$("#shortcut_div").hide();
-		$("#page-desktop").hide();
 
-		this.cur_route = window.location.hash;
-		this.last_route = null;
-
-		this.register_redirect_events();
-		this.get_user_shortcut_settings();
+		this.update_dom();
 		this.render();
 		this.register_icon_events();
 		this.make_sortable();
@@ -25,39 +25,35 @@ frappe.ui.shortcut = class Shortcut {
 			if(r.message){
 				this.nav = r.message.nav;
 				this.user_homepage = r.message.user_homepage;
-				this.handle_redirect();
-
-				if(this.nav == "Sidebar"){
-					$("#body_div").addClass("shortcut-body");
-					this.container.show();
-				} else {
-					$("#body_div").removeClass("shortcut-body");
-					this.container.hide();
-				}
+				frappe.session.user_nav = r.message.nav;
+				frappe.session.user_homepage = r.message.user_homepage;
+				this.update_reroute();
+				this.update_dom();
 			}
 		}).fail((f) => {
 			console.log(f);
 		});
 	}
 
-	register_redirect_events() {
-		var me = this;
-		frappe.route.on("change", function(){
-			me.last_route = me.cur_route;
-			me.cur_route = window.location.hash;
-			me.handle_redirect();
-		});
+	update_reroute(){
+		if(frappe.re_route["#desktop"]) delete frappe.re_route["#desktop"];
+		if(frappe.re_route[""]) delete frappe.re_route[""];
+
+		if(frappe.session.user_homepage && frappe.session.user_homepage != "" && frappe.session.user_homepage != "desktop"){
+			frappe.re_route[""] = frappe.session.user_homepage;
+			if(frappe.session.user_nav == "Sidebar"){
+				frappe.re_route["#desktop"] = frappe.session.user_homepage;
+			}
+		}
 	}
 
-	handle_redirect() {
-		$("#page-desktop").hide();
-		var frappe_route = frappe.get_route()[0];
-		if(this.cur_route == "" && this.last_route == "#"+this.user_homepage) {
-			history.back();
-		} else if((frappe_route == "" || (this.nav == "Sidebar" && frappe_route == "desktop")) && this.user_homepage && this.user_homepage != "desktop"){ // if route == desk
-			frappe.set_route(this.user_homepage); // redirect to user homepage
-		} else if(frappe_route == "" || frappe_route == "desktop") {
-			$("#page-desktop").show();
+	update_dom(){
+		if(this.nav == "Sidebar"){
+			$("#body_div").addClass("shortcut-body");
+			this.container.show();
+		} else {
+			$("#body_div").removeClass("shortcut-body");
+			this.container.hide();
 		}
 	}
 
