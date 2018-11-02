@@ -74,6 +74,7 @@ frappe.ui.DeskSidebar = class DeskSidebar {
 
 	register_icon_events() {
 		this.wiggling = false;
+		this.scrolling = false;
 		var me = this;
 		this.container.on("click", ".app-icon, .app-icon-svg", function() {
 			if ( !me.wiggling ) {
@@ -85,6 +86,25 @@ frappe.ui.DeskSidebar = class DeskSidebar {
 				container: ".main-section",
 				placement: "right"
 			});
+		});
+		$("#desk_sidebar_div").add(window).scroll(function() {
+			if(!me.scrolling){
+				me.scrolling = true;
+				$("#desk_sidebar_div .desk-sidebar-icon .app-icon").each(function() {
+					$(this).tooltip('disable');
+					$(this).tooltip('hide');
+				});
+			}
+			clearTimeout($.data(this, 'scrollTimer'));
+			$.data(this, 'scrollTimer', setTimeout(function() {
+				me.scrolling = false;
+				$("#desk_sidebar_div .desk-sidebar-icon .app-icon").each(function() {
+					$(this).tooltip('enable');
+					if($(this).is(":hover")) {
+						$(this).tooltip('show');
+					}
+				});
+			}, 250));
 		});
 	}
 
