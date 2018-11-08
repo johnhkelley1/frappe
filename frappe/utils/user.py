@@ -383,7 +383,5 @@ def get_link_to_reset_password(user):
 
 @frappe.whitelist()
 def get_desk_navigation_settings():
-	user = frappe.session.user
-	nav = frappe.db.get_value("User", user, "desk_navigation")
-	homepage = frappe.db.get_value("User", user, "user_homepage")
-	return {"nav": nav, "user_homepage": homepage}
+	nav, homepage = frappe.db.get_cached_value("User", frappe.session.user, ["desk_navigation", "homepage"])
+	return {"nav": nav, "homepage": homepage}
