@@ -2,8 +2,6 @@ frappe.provide("frappe.ui");
 frappe.ui.DeskSidebar = class DeskSidebar {
 
 	constructor() {
-		this.user_homepage = frappe.session.user_homepage;
-		this.nav = frappe.session.user_nav;
 
 		this.update_reroute();
 
@@ -22,10 +20,8 @@ frappe.ui.DeskSidebar = class DeskSidebar {
 			method: "frappe.utils.user.get_desk_navigation_settings"
 		}).done((r) => {
 			if(r.message){
-				this.nav = r.message.nav;
-				this.user_homepage = r.message.user_homepage;
 				frappe.session.user_nav = r.message.nav;
-				frappe.session.user_homepage = r.message.user_homepage;
+				frappe.session.user_homepage = r.message.homepage;
 				this.update_reroute();
 				this.update_dom();
 			}
@@ -47,7 +43,7 @@ frappe.ui.DeskSidebar = class DeskSidebar {
 	}
 
 	update_dom(){
-		if(this.nav == "Sidebar"){
+		if(frappe.session.user_nav == "Sidebar"){
 			$("#body_div").addClass("with-sidebar");
 			this.container.show();
 		} else {

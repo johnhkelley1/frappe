@@ -214,8 +214,8 @@ def add_home_page(bootinfo, docs):
 	if frappe.session.user=="Guest":
 		return
 
-	if bootinfo.user.user_homepage:
-		home_page = bootinfo.user.user_homepage
+	if bootinfo.user.homepage:
+		home_page = bootinfo.user.homepage
 	else:
 		home_page = frappe.db.get_default("desktop:home_page")
 

@@ -54,7 +54,7 @@ frappe.ui.form.on('User', {
 			}
 		}
 
-		cur_frm.set_query("user_homepage", function() {
+		cur_frm.set_query("homepage", function() {
 			if(frm.doc.desk_navigation == "Desktop") return {};
 			return {
 				"filters": [
@@ -213,13 +213,13 @@ frappe.ui.form.on('User', {
 		})
 	},
 	desk_navigation: function(frm){
-		if(frm.doc.desk_navigation == "Sidebar" && frm.doc.user_homepage == "desktop"){
-			frm.set_value("user_homepage", null);
+		if(frm.doc.desk_navigation == "Sidebar" && frm.doc.homepage == "desktop"){
+			frm.set_value("homepage", null);
 		}
 	},
-	user_homepage: function(frm){
-		if(frm.doc.desk_navigation == "Sidebar" && frm.doc.user_homepage == "desktop"){
-			frm.set_value("user_homepage", null);
+	homepage: function(frm){
+		if(frm.doc.desk_navigation == "Sidebar" && frm.doc.homepage == "desktop"){
+			frm.set_value("homepage", null);
 		}
 	},
 	after_save: function(frm){
